@@ -33,6 +33,7 @@ import { isRef } from './ref'
 const isNonTrackableKeys = /*#__PURE__*/ makeMap(`__proto__,__v_isRef,__isVue`)
 
 const builtInSymbols = new Set(
+  // 获取 Symbol上的属性
   Object.getOwnPropertyNames(Symbol)
     .map(key => (Symbol as any)[key])
     .filter(isSymbol)
@@ -45,14 +46,17 @@ const shallowReadonlyGet = /*#__PURE__*/ createGetter(true, true)
 
 const arrayInstrumentations = /*#__PURE__*/ createArrayInstrumentations()
 
+// 重写了数组的某些方法，确保数组每一项都被依赖收集
 function createArrayInstrumentations() {
-  const instrumentations: Record<string, Function> = {}
+  const instrumentations: Record<string, Function> = {} 
   // instrument identity-sensitive Array methods to account for possible reactive
   // values
   ;(['includes', 'indexOf', 'lastIndexOf'] as const).forEach(key => {
     instrumentations[key] = function (this: unknown[], ...args: unknown[]) {
       const arr = toRaw(this) as any
       for (let i = 0, l = this.length; i < l; i++) {
+        // 对数组的每一项数组进行依赖收集
+        // proxy([1,2,3]).includes('1')
         track(arr, TrackOpTypes.GET, i + '')
       }
       // we run the method using the original args first (which may be reactive)
@@ -69,9 +73,9 @@ function createArrayInstrumentations() {
   // which leads to infinite loops in some cases (#2137)
   ;(['push', 'pop', 'shift', 'unshift', 'splice'] as const).forEach(key => {
     instrumentations[key] = function (this: unknown[], ...args: unknown[]) {
-      pauseTracking()
+      pauseTracking() // 暂停收集依赖
       const res = (toRaw(this) as any)[key].apply(this, args)
-      resetTracking()
+      resetTracking() // 从新开始收集依赖
       return res
     }
   })
@@ -99,6 +103,7 @@ function createGetter(isReadonly = false, shallow = false) {
       return target
     }
 
+    // 数组需要特殊处理
     const targetIsArray = isArray(target)
 
     if (!isReadonly && targetIsArray && hasOwn(arrayInstrumentations, key)) {

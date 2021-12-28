@@ -69,6 +69,7 @@ export const toTypeString = (value: unknown): string =>
 
 export const toRawType = (value: unknown): string => {
   // extract "RawType" from strings like "[object RawType]"
+  // 通过 Object.prototype.toString.call() 获取类型
   return toTypeString(value).slice(8, -1)
 }
 

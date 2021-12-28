@@ -140,6 +140,7 @@ function createConfig(format, output, plugins = []) {
   } else {
     // Node / esm-bundler builds.
     // externalize all direct deps unless it's the compat build.
+    // node 环境或者 esm-bundler 依赖不进行打包，每个包是独立的
     external = [
       ...Object.keys(pkg.dependencies || {}),
       ...Object.keys(pkg.peerDependencies || {}),

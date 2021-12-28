@@ -87,6 +87,7 @@ export type UnwrapNestedRefs<T> = T extends Ref ? T : UnwrapRefSimple<T>
 export function reactive<T extends object>(target: T): UnwrapNestedRefs<T>
 export function reactive(target: object) {
   // if trying to observe a readonly proxy, return the readonly version.
+  // 场景: reactive(readonly({})) 会访问 ReactiveFlags.IS_READONLY 属性，该属性在 createGetter中特殊处理
   if (target && (target as Target)[ReactiveFlags.IS_READONLY]) {
     return target
   }
@@ -94,7 +95,7 @@ export function reactive(target: object) {
     target,
     false,
     mutableHandlers,
-    mutableCollectionHandlers,
+    mutableCollectionHandlers, // 用来收集 集合类型 map, set 
     reactiveMap
   )
 }
@@ -194,6 +195,9 @@ function createReactiveObject(
   // target is already a Proxy, return it.
   // exception: calling readonly() on a reactive object
   if (
+    // ReactiveFlags.RAW 用来判断当前target是否被代理过了
+    // 如果 target没有被代理过，则不会触发 getter函数
+    // reactive(reactive({})) 
     target[ReactiveFlags.RAW] &&
     !(isReadonly && target[ReactiveFlags.IS_REACTIVE])
   ) {
