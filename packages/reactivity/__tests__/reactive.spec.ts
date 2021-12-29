@@ -5,6 +5,7 @@ import { effect } from '../src/effect'
 
 describe('reactivity/reactive', () => {
   test('Object', () => {
+  
     const original = { foo: 1 }
     const observed = reactive(original)
     expect(observed).not.toBe(original)
@@ -24,6 +25,7 @@ describe('reactivity/reactive', () => {
     expect(isReactive(reactiveObj)).toBe(true)
     // read prop of reactiveObject will cause reactiveObj[prop] to be reactive
     // @ts-ignore
+    // 原型对象不会进行依赖收集，直接返回 __proto__ 对象
     const prototype = reactiveObj['__proto__']
     const otherObj = { data: ['a'] }
     expect(isReactive(otherObj)).toBe(false)
@@ -168,6 +170,7 @@ describe('reactivity/reactive', () => {
   test('toRaw on object using reactive as prototype', () => {
     const original = reactive({})
     const obj = Object.create(original)
+    //toRaw直接返回没有被代理的对象
     const raw = toRaw(obj)
     expect(raw).toBe(obj)
     expect(raw).not.toBe(toRaw(original))
@@ -183,6 +186,7 @@ describe('reactivity/reactive', () => {
 
   test('should unwrap computed refs', () => {
     // readonly
+    // computed: __v_isRef:true
     const a = computed(() => 1)
     // writable
     const b = computed({
@@ -193,10 +197,11 @@ describe('reactivity/reactive', () => {
     // check type
     obj.a + 1
     obj.b + 1
+    // reactive的 属性如果 ref， 则会自动解包 获取 ref.value
     expect(typeof obj.a).toBe(`number`)
     expect(typeof obj.b).toBe(`number`)
   })
-
+  // TODO
   test('should allow setting property from a ref to another ref', () => {
     const foo = ref(0)
     const bar = ref(1)

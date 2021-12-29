@@ -53,7 +53,6 @@ export const MAP_KEY_ITERATE_KEY = Symbol(__DEV__ ? 'Map key iterate' : '')
 export class ReactiveEffect<T = any> {
   active = true
   deps: Dep[] = []
-
   // can be attached after creation
   computed?: boolean
   allowRecurse?: boolean
@@ -81,7 +80,8 @@ export class ReactiveEffect<T = any> {
         enableTracking()
 
         trackOpBit = 1 << ++effectTrackDepth
-
+        // 重新执行effect的时候，如果和之前执行的effect收集的依赖不一致
+        // 则会删除不一致的依赖
         if (effectTrackDepth <= maxMarkerBits) {
           initDepMarkers(this)
         } else {
@@ -146,16 +146,19 @@ export function effect<T = any>(
   fn: () => T,
   options?: ReactiveEffectOptions
 ): ReactiveEffectRunner {
+  // 如果传入一个 effectRuner 则 获取得到 effectRuner上的 fn
+  // 在重新创建一个 effect
   if ((fn as ReactiveEffectRunner).effect) {
     fn = (fn as ReactiveEffectRunner).effect.fn
   }
-
+  // 每次都会重新创建一个effect
   const _effect = new ReactiveEffect(fn)
   if (options) {
     extend(_effect, options)
     if (options.scope) recordEffectScope(_effect, options.scope)
   }
   if (!options || !options.lazy) {
+    //执行不是 lazy的 effect
     _effect.run()
   }
   const runner = _effect.run.bind(_effect) as ReactiveEffectRunner

@@ -109,7 +109,7 @@ function createGetter(isReadonly = false, shallow = false) {
     if (!isReadonly && targetIsArray && hasOwn(arrayInstrumentations, key)) {
       return Reflect.get(arrayInstrumentations, key, receiver)
     }
-
+//  Reflect.get([1,2,3], 0) === 1
     const res = Reflect.get(target, key, receiver)
 
     if (isSymbol(key) ? builtInSymbols.has(key) : isNonTrackableKeys(key)) {
