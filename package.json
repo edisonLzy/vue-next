@@ -27,7 +27,8 @@
     "build-sfc-playground": "cd packages/sfc-playground && npm run build",
     "dev:reactive":"npm run dev -- reactivity -s",
     "test:reactive":"jest a --runTestsByPath packages/reactivity/__tests__/reactive.spec.ts",
-    "test:runtime-dom":"jest a --runTestsByPath packages/runtime-dom/__tests__/patchEvents.spec.ts"    
+    "test:runtime-dom":"jest a --runTestsByPath packages/runtime-dom/__tests__/patchEvents.spec.ts",
+    "test:runtime-core":"jest a --runTestsByPath packages/runtime-core/__tests__/apiCreateApp.spec.ts"        
   },
   "types": "test-dts/index.d.ts",
   "tsd": {

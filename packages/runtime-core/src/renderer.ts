@@ -418,6 +418,7 @@ function baseCreateRenderer(
             optimized
           )
         } else if (shapeFlag & ShapeFlags.COMPONENT) {
+          // 渲染流程: 处理组件
           processComponent(
             n1,
             n2,
@@ -468,6 +469,7 @@ function baseCreateRenderer(
 
   const processText: ProcessTextOrCommentFn = (n1, n2, container, anchor) => {
     if (n1 == null) {
+      // 渲染流程: 调用 runtime-dom提供的真实DOM操作方法 插入文本节点
       hostInsert(
         (n2.el = hostCreateText(n2.children as string)),
         container,
@@ -712,6 +714,7 @@ function baseCreateRenderer(
     if (needCallTransitionHooks) {
       transition!.beforeEnter(el)
     }
+    // 渲染流程: 挂载 元素到界面中
     hostInsert(el, container, anchor)
     if (
       (vnodeHook = props && props.onVnodeMounted) ||
@@ -1164,6 +1167,7 @@ function baseCreateRenderer(
           optimized
         )
       } else {
+        //渲染流程: 挂载组件
         mountComponent(
           n2,
           container,
@@ -1194,6 +1198,7 @@ function baseCreateRenderer(
       __COMPAT__ && initialVNode.isCompatRoot && initialVNode.component
     const instance: ComponentInternalInstance =
       compatMountInstance ||
+      // 渲染流程: 根据 vNode创建 组件实例 并初始化vNode的component属性
       (initialVNode.component = createComponentInstance(
         initialVNode,
         parentComponent,
@@ -1238,7 +1243,7 @@ function baseCreateRenderer(
       }
       return
     }
-
+    // 渲染流程: 初始化 渲染effect
     setupRenderEffect(
       instance,
       initialVNode,
@@ -1299,8 +1304,10 @@ function baseCreateRenderer(
     isSVG,
     optimized
   ) => {
+    // 渲染流程: 创建渲染的 effect
     const componentUpdateFn = () => {
       if (!instance.isMounted) {
+        // 渲染流程: 根据 isMounted属性来判断是更新还是初次挂载
         let vnodeHook: VNodeHook | null | undefined
         const { el, props } = initialVNode
         const { bm, m, parent } = instance
@@ -1316,6 +1323,7 @@ function baseCreateRenderer(
           !isAsyncWrapperVNode &&
           (vnodeHook = props && props.onVnodeBeforeMount)
         ) {
+          //渲染流程: 调用vnode的hook
           invokeVNodeHook(vnodeHook, parent, initialVNode)
         }
         if (
@@ -1366,6 +1374,7 @@ function baseCreateRenderer(
           if (__DEV__) {
             startMeasure(instance, `render`)
           }
+          // 渲染流程: 执行组件实例上的 render方法 得到subTree的vNode
           const subTree = (instance.subTree = renderComponentRoot(instance))
           if (__DEV__) {
             endMeasure(instance, `render`)
@@ -1373,6 +1382,7 @@ function baseCreateRenderer(
           if (__DEV__) {
             startMeasure(instance, `patch`)
           }
+          // 渲染流程: patch subTree
           patch(
             null,
             subTree,
@@ -1385,6 +1395,7 @@ function baseCreateRenderer(
           if (__DEV__) {
             endMeasure(instance, `patch`)
           }
+          // 渲染流程: 让组件的 el属性 指向 subTree的el属性
           initialVNode.el = subTree.el
         }
         // mounted hook
@@ -1427,6 +1438,7 @@ function baseCreateRenderer(
             )
           }
         }
+        // 渲染流程: 更新 isMounted属性  组件挂载完成
         instance.isMounted = true
 
         if (__DEV__ || __FEATURE_PROD_DEVTOOLS__) {
@@ -1543,7 +1555,7 @@ function baseCreateRenderer(
       () => queueJob(instance.update),
       instance.scope // track it in component's effect scope
     ))
-
+   // 渲染流程: 初始化组件实例点 update
     const update = (instance.update = effect.run.bind(effect) as SchedulerJob)
     update.id = instance.uid
     // allowRecurse
@@ -1560,7 +1572,7 @@ function baseCreateRenderer(
       // @ts-ignore (for scheduler)
       update.ownerInstance = instance
     }
-
+   //渲染流程: 执行 effect的 run方法 开始进行依赖收集
     update()
   }
 
@@ -2302,6 +2314,7 @@ function baseCreateRenderer(
         unmount(container._vnode, null, null, true)
       }
     } else {
+     // 渲染流程: 创建vnode之后 开始patch
       patch(container._vnode || null, vnode, container, null, null, null, isSVG)
     }
     flushPostFlushCbs()

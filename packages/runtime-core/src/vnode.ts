@@ -407,6 +407,7 @@ function createBaseVNode(
   isBlockNode = false,
   needFullChildrenNormalization = false
 ) {
+  //渲染流程: vNode
   const vnode = {
     __v_isVNode: true,
     __v_skip: true,
@@ -417,13 +418,13 @@ function createBaseVNode(
     scopeId: currentScopeId,
     slotScopeIds: null,
     children,
-    component: null,
+    component: null, 
     suspense: null,
     ssContent: null,
     ssFallback: null,
     dirs: null,
     transition: null,
-    el: null,
+    el: null, 
     anchor: null,
     target: null,
     targetAnchor: null,
@@ -436,6 +437,7 @@ function createBaseVNode(
   } as VNode
 
   if (needFullChildrenNormalization) {
+    //渲染流程: 格式化子元素并 组合当前子元素的type到当前的vNode的type属性
     normalizeChildren(vnode, children)
     // normalize suspense children
     if (__FEATURE_SUSPENSE__ && shapeFlag & ShapeFlags.SUSPENSE) {
@@ -542,6 +544,7 @@ function _createVNode(
   }
 
   // encode the vnode type information into a bitmap
+  // 渲染流程: 对于组件来说，type为用户传入的组件对象
   const shapeFlag = isString(type)
     ? ShapeFlags.ELEMENT
     : __FEATURE_SUSPENSE__ && isSuspense(type)
@@ -779,6 +782,7 @@ export function normalizeChildren(vnode: VNode, children: unknown) {
       type = ShapeFlags.TEXT_CHILDREN
     }
   }
+  // 渲染流程: 根据不同的类型 标记 子元素的shapeFlag
   vnode.children = children as VNodeNormalizedChildren
   vnode.shapeFlag |= type
 }

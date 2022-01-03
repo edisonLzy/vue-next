@@ -455,7 +455,7 @@ export function createComponentInstance(
   // inherit parent app context - or - if root, adopt from root vnode
   const appContext =
     (parent ? parent.appContext : vnode.appContext) || emptyAppContext
-
+ // 渲染流程: 组件实例
   const instance: ComponentInternalInstance = {
     uid: uid++,
     vnode,
@@ -587,6 +587,7 @@ export function setupComponent(
 
   const { props, children } = instance.vnode
   const isStateful = isStatefulComponent(instance)
+  // 渲染流程: 初始化组件实例点 props 和 插槽
   initProps(instance, props, isStateful, isSSR)
   initSlots(instance, children)
 
@@ -601,6 +602,7 @@ function setupStatefulComponent(
   instance: ComponentInternalInstance,
   isSSR: boolean
 ) {
+  // 渲染流程: 获取用户传入的组件对象(type)
   const Component = instance.type as ComponentOptions
 
   if (__DEV__) {
@@ -631,6 +633,7 @@ function setupStatefulComponent(
   instance.accessCache = Object.create(null)
   // 1. create public instance / render proxy
   // also mark it raw so it's never observed
+  // 渲染流程: 创建上下文的代理对象 该对象会传递给render的proxy属性
   instance.proxy = markRaw(new Proxy(instance.ctx, PublicInstanceProxyHandlers))
   if (__DEV__) {
     exposePropsOnRenderContext(instance)
@@ -642,6 +645,7 @@ function setupStatefulComponent(
       setup.length > 1 ? createSetupContext(instance) : null)
 
     setCurrentInstance(instance)
+    // 渲染流程: 暂停追踪 effect，避免setup被多次调用
     pauseTracking()
     const setupResult = callWithErrorHandling(
       setup,
@@ -694,6 +698,7 @@ export function handleSetupResult(
       // set it as ssrRender instead.
       instance.ssrRender = setupResult
     } else {
+      // 渲染流程: 初始化 组件的render方法
       instance.render = setupResult as InternalRenderFunction
     }
   } else if (isObject(setupResult)) {

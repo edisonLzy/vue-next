@@ -158,8 +158,8 @@ export function createAppContext(): AppContext {
       compilerOptions: {}
     },
     mixins: [],
-    components: {},
-    directives: {},
+    components: {},// 渲染流程: 注册的全局组件
+    directives: {},// 渲染流程: 组册的全局指令
     provides: Object.create(null),
     optionsCache: new WeakMap(),
     propsCache: new WeakMap(),
@@ -191,6 +191,7 @@ export function createAppAPI<HostElement>(
 
     const app: App = (context.app = {
       _uid: uid++,
+      // ConcreteComponent: 具体的组件
       _component: rootComponent as ConcreteComponent,
       _props: rootProps,
       _container: null,
@@ -280,6 +281,7 @@ export function createAppAPI<HostElement>(
         isSVG?: boolean
       ): any {
         if (!isMounted) {
+          // 渲染流程: 根据组件组件创建 vNode
           const vnode = createVNode(
             rootComponent as ConcreteComponent,
             rootProps
@@ -298,6 +300,7 @@ export function createAppAPI<HostElement>(
           if (isHydrate && hydrate) {
             hydrate(vnode as VNode<Node, Element>, rootContainer as any)
           } else {
+            // 渲染流程: 根据创建的vnode创建真实DOM节点并渲染到容器节点中
             render(vnode, rootContainer, isSVG)
           }
           isMounted = true
