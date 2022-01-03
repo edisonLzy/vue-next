@@ -27,7 +27,7 @@ export const NO = () => false
 
 const onRE = /^on[^a-z]/
 export const isOn = (key: string) => onRE.test(key)
-
+// v-model 处理的事件
 export const isModelListener = (key: string) => key.startsWith('onUpdate:')
 
 export const extend = Object.assign

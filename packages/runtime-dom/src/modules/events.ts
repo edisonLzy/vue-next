@@ -75,9 +75,11 @@ export function patchEvent(
     // patch
     existingInvoker.value = nextValue
   } else {
+    // options 为解析得到的修饰符，将传递给 addEventListener的第三个参数
     const [name, options] = parseName(rawName)
     if (nextValue) {
       // add
+      // {onClick: invoker}
       const invoker = (invokers[rawName] = createInvoker(nextValue, instance))
       addEventListener(el, name, invoker, options)
     } else if (existingInvoker) {
@@ -126,6 +128,7 @@ function createInvoker(
       )
     }
   }
+  // 通过 invoker.value 保存事件处理函数
   invoker.value = initialValue
   invoker.attached = getNow()
   return invoker
@@ -138,6 +141,7 @@ function patchStopImmediatePropagation(
   if (isArray(value)) {
     const originalStop = e.stopImmediatePropagation
     e.stopImmediatePropagation = () => {
+      // 劫持 stopImmediatePropagation 方法，用于多个事件处理函数的时候，通过stopImmediatePropagation来避免后续事件处理函数的执行
       originalStop.call(e)
       ;(e as any)._stopped = true
     }

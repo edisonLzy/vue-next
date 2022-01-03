@@ -1,3 +1,4 @@
+// 事件处理: 完成
 import { patchProp } from '../src/patchProp'
 
 const timeout = () => new Promise(r => setTimeout(r))
@@ -8,6 +9,7 @@ describe(`runtime-dom: events patching`, () => {
     const event = new Event('click')
     const fn = jest.fn()
     patchProp(el, 'onClick', null, fn)
+    // 事件绑定: 将一个合成事件事件分派给目标，如果事件的cancelable属性值为false或它的preventDefault()方法未被调用，则返回true，否则返回false。
     el.dispatchEvent(event)
     await timeout()
     el.dispatchEvent(event)
@@ -35,6 +37,7 @@ describe(`runtime-dom: events patching`, () => {
   })
 
   it('should support multiple event handlers', async () => {
+    // 事件绑定:绑定多个事件处理函数
     const el = document.createElement('div')
     const event = new Event('click')
     const fn1 = jest.fn()
@@ -61,6 +64,7 @@ describe(`runtime-dom: events patching`, () => {
     const el = document.createElement('div')
     const event = new Event('click')
     const fn = jest.fn()
+    // 事件绑定: 带有修饰符的事件绑定
     patchProp(el, 'onClickOnceCapture', null, fn)
     el.dispatchEvent(event)
     await timeout()
@@ -87,9 +91,9 @@ describe(`runtime-dom: events patching`, () => {
   })
 
   it('should support native onclick', async () => {
+    // 事件绑定: 原生的事件绑定
     const el = document.createElement('div')
     const event = new Event('click')
-
     // string should be set as attribute
     const fn = ((window as any).__globalSpy = jest.fn())
     patchProp(el, 'onclick', null, '__globalSpy(1)')

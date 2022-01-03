@@ -26,7 +26,8 @@
     "prebuild-sfc-playground": "node scripts/build.js compiler reactivity-transform shared -af cjs && node scripts/build.js runtime reactivity shared -af esm-bundler && node scripts/build.js vue -f esm-bundler-runtime && node scripts/build.js vue -f esm-browser-runtime && node scripts/build.js compiler-sfc -f esm-browser",
     "build-sfc-playground": "cd packages/sfc-playground && npm run build",
     "dev:reactive":"npm run dev -- reactivity -s",
-    "test:reactive":"jest a --runTestsByPath packages/reactivity/__tests__/reactive.spec.ts"
+    "test:reactive":"jest a --runTestsByPath packages/reactivity/__tests__/reactive.spec.ts",
+    "test:runtime-dom":"jest a --runTestsByPath packages/runtime-dom/__tests__/patchEvents.spec.ts"    
   },
   "types": "test-dts/index.d.ts",
   "tsd": {

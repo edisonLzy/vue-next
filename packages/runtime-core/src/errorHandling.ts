@@ -92,6 +92,7 @@ export function callWithAsyncErrorHandling(
 
   const values = []
   for (let i = 0; i < fn.length; i++) {
+    // 当 fn是数组的情况，多个事件处理函数将在这里执行
     values.push(callWithAsyncErrorHandling(fn[i], instance, type, args))
   }
   return values
