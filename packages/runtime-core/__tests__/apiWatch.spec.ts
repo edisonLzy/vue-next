@@ -142,11 +142,14 @@ describe('api: watch', () => {
   })
 
   it('directly watching reactive object (with automatic deep: true)', async () => {
+    // 1. getter =>  () => reactive
+    // 2. 通过 travese 让每个属性都收集effect
+    // 3. 属性发生变化的时候，从新执行 effect并且deep为true会直接执行 cb
     const src = reactive({
       count: 0
     })
     let dummy
-    watch(src, ({ count }) => {
+    watch(src, ({ count }) => {  
       dummy = count
     })
     src.count++

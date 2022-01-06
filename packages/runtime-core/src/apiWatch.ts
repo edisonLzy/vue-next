@@ -207,6 +207,7 @@ function doWatch(
     getter = () => source.value
     forceTrigger = !!source._shallow
   } else if (isReactive(source)) {
+    // source 一个 reactive的情况
     getter = () => source
     deep = true
   } else if (isArray(source)) {
@@ -303,6 +304,8 @@ function doWatch(
     if (cb) {
       // watch(source, cb)
       const newValue = effect.run()
+       
+      // watch: deep将直接执行 cb
       if (
         deep ||
         forceTrigger ||
@@ -449,6 +452,8 @@ export function traverse(value: unknown, seen?: Set<unknown>) {
     })
   } else if (isPlainObject(value)) {
     for (const key in value) {
+      // watch: source为reactive且deep 为 true的逻辑
+      // 会访问对象中的每一个属性，从而触发getter进行依赖收集
       traverse((value as any)[key], seen)
     }
   }
