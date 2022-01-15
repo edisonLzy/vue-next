@@ -178,8 +178,10 @@ export function initProps(
 
   if (isStateful) {
     // stateful
+    // 渲染流程: 有状态组件 将props转换为代理对象
     instance.props = isSSR ? props : shallowReactive(props)
   } else {
+    // 渲染流程: 如果函数组件存在 props属性则，将 props作为属性传入，如果不存在 props则将 attrs作为 属性
     if (!instance.type.props) {
       // functional w/ optional props, props === attrs
       instance.props = attrs

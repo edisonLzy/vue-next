@@ -537,6 +537,7 @@ export function createComponentInstance(
     instance.ctx = { _: instance }
   }
   instance.root = parent ? parent.root : instance
+  // 渲染流程: 初始化 emit方法
   instance.emit = emit.bind(null, instance)
 
   // apply custom element special handling

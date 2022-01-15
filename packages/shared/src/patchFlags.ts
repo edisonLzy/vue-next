@@ -16,6 +16,7 @@
  * Check the `patchElement` function in '../../runtime-core/src/renderer.ts' to see how the
  * flags are handled during diff.
  */
+// PatchFlags定义
 export const enum PatchFlags {
   /**
    * Indicates an element with dynamic textContent (children fast path)

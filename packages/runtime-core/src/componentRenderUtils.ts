@@ -85,12 +85,13 @@ export function renderComponentRoot(
       )
       fallthroughAttrs = attrs
     } else {
-      // functional
+      // 渲染流程: 函数组件 在 渲染effect中的执行逻辑 
       const render = Component as FunctionalComponent
       // in dev, mark attrs accessed if optional props (attrs === props)
       if (__DEV__ && attrs === props) {
         markAttrsAccessed()
       }
+      // 渲染流程: 函数组件 在这里会进行依赖收集
       result = normalizeVNode(
         render.length > 1
           ? render(

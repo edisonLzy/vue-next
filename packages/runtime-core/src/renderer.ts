@@ -418,7 +418,7 @@ function baseCreateRenderer(
             optimized
           )
         } else if (shapeFlag & ShapeFlags.COMPONENT) {
-          // 渲染流程: 处理组件
+          // 渲染流程: 处理组件 (包括函数组件和有状态组件)
           processComponent(
             n1,
             n2,
@@ -833,6 +833,7 @@ function baseCreateRenderer(
 
     const areChildrenSVG = isSVG && n2.type !== 'foreignObject'
     if (dynamicChildren) {
+      // 更新阶段: 如果是 block则只更新收集到的动态节点
       patchBlockChildren(
         n1.dynamicChildren!,
         dynamicChildren,
@@ -846,7 +847,7 @@ function baseCreateRenderer(
         traverseStaticChildren(n1, n2)
       }
     } else if (!optimized) {
-      // full diff
+      // 更新阶段：对比所有的孩子 full diff
       patchChildren(
         n1,
         n2,
@@ -877,6 +878,7 @@ function baseCreateRenderer(
           isSVG
         )
       } else {
+        // 更新阶段: 根据不同的 PatchFlags进行更新
         // class
         // this flag is matched when the element has dynamic class bindings.
         if (patchFlag & PatchFlags.CLASS) {
@@ -1158,6 +1160,7 @@ function baseCreateRenderer(
   ) => {
     n2.slotScopeIds = slotScopeIds
     if (n1 == null) {
+      // 组件渲染: keep-alive
       if (n2.shapeFlag & ShapeFlags.COMPONENT_KEPT_ALIVE) {
         ;(parentComponent!.ctx as KeepAliveContext).activate(
           n2,
@@ -1448,7 +1451,7 @@ function baseCreateRenderer(
         // #2458: deference mount-only object parameters to prevent memleaks
         initialVNode = container = anchor = null as any
       } else {
-        // updateComponent
+        // 更新流程:updateComponent
         // This is triggered by mutation of component's own state (next: null)
         // OR parent calling processComponent (next: VNode)
         let { next, bu, u, parent, vnode } = instance
