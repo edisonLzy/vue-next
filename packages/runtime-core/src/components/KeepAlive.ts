@@ -76,6 +76,7 @@ const KeepAliveImpl: ComponentOptions = {
   // Marker for special handling inside the renderer. We are not using a ===
   // check directly on KeepAlive in the renderer, because importing it directly
   // would prevent it from being tree-shaken.
+  // keep-alive: 表示是 keep-alive组件，在mountComponent时特殊处理
   __isKeepAlive: true,
 
   props: {

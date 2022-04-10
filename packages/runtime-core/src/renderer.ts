@@ -707,6 +707,7 @@ function baseCreateRenderer(
     }
     // #1583 For inside suspense + suspense not resolved case, enter hook should call when suspense resolved
     // #1689 For inside suspense + suspense resolved case, just call it
+    // transition: 如果存在transition则在dom挂载之前调用 beforeEnter hook
     const needCallTransitionHooks =
       (!parentSuspense || (parentSuspense && !parentSuspense.pendingBranch)) &&
       transition &&
@@ -723,6 +724,7 @@ function baseCreateRenderer(
     ) {
       queuePostRenderEffect(() => {
         vnodeHook && invokeVNodeHook(vnodeHook, parentComponent, vnode)
+        // transition: 异步调度 transition.enter hook
         needCallTransitionHooks && transition!.enter(el)
         dirs && invokeDirectiveHook(vnode, null, parentComponent, 'mounted')
       }, parentSuspense)
@@ -1159,6 +1161,7 @@ function baseCreateRenderer(
     n2.slotScopeIds = slotScopeIds
     if (n1 == null) {
       if (n2.shapeFlag & ShapeFlags.COMPONENT_KEPT_ALIVE) {
+        // keep-alive: 激活阶段
         ;(parentComponent!.ctx as KeepAliveContext).activate(
           n2,
           container,
@@ -1216,6 +1219,7 @@ function baseCreateRenderer(
 
     // inject renderer internals for keepAlive
     if (isKeepAlive(initialVNode)) {
+      // keep-alive
       ;(instance.ctx as KeepAliveContext).renderer = internals
     }
 
@@ -1224,6 +1228,7 @@ function baseCreateRenderer(
       if (__DEV__) {
         startMeasure(instance, `init`)
       }
+      // 渲染流程: 初始化 props和slots, 如果是stateful组件会调用setup函数 
       setupComponent(instance)
       if (__DEV__) {
         endMeasure(instance, `init`)
@@ -1448,6 +1453,7 @@ function baseCreateRenderer(
         // #2458: deference mount-only object parameters to prevent memleaks
         initialVNode = container = anchor = null as any
       } else {
+        // 更新阶段
         // updateComponent
         // This is triggered by mutation of component's own state (next: null)
         // OR parent calling processComponent (next: VNode)
@@ -2086,6 +2092,7 @@ function baseCreateRenderer(
       setRef(ref, null, parentSuspense, vnode, true)
     }
 
+    // keep-alive: 卸载老节点直接调用 deactivate 
     if (shapeFlag & ShapeFlags.COMPONENT_SHOULD_KEEP_ALIVE) {
       ;(parentComponent!.ctx as KeepAliveContext).deactivate(vnode)
       return
@@ -2176,6 +2183,7 @@ function baseCreateRenderer(
       return
     }
 
+    // transition: 卸载dom,如果存在transition.afterLeave则调用
     const performRemove = () => {
       hostRemove(el!)
       if (transition && !transition.persisted && transition.afterLeave) {
@@ -2188,6 +2196,7 @@ function baseCreateRenderer(
       transition &&
       !transition.persisted
     ) {
+      // transition: 执行transition的leave
       const { leave, delayLeave } = transition
       const performLeave = () => leave(el!, performRemove)
       if (delayLeave) {

@@ -698,7 +698,7 @@ export function handleSetupResult(
       // set it as ssrRender instead.
       instance.ssrRender = setupResult
     } else {
-      // 渲染流程: 初始化 组件的render方法
+      // 渲染流程: 如果 setup的结果是函数，则作为 初始化 组件的render方法
       instance.render = setupResult as InternalRenderFunction
     }
   } else if (isObject(setupResult)) {
