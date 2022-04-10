@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <div id="root"></div>
+    <script src="../packages/vue/dist/vue.global.js">
+
+    </script>
+    <script>
+        const {
+            createApp,
+            ref,
+            onMounted,
+            h
+        } = Vue;
+
+
+        function useName() {
+            const nameRef = ref('lee');
+            // setTimeout(() => {
+            //     // nameRef.value = '李';
+            // }, 2000)
+            return nameRef
+        }
+
+        const nameRef = useName()
+
+        const Comp2 = props=>h('div','text')
+        const Comp = (props) => {
+            return [
+            nameRef.value + props.age,
+            h(Comp2)
+            ]
+        };
+
+        const app = createApp(Comp, {
+            name: nameRef,
+            age: '18'
+        })
+
+        app.mount('#root')
+    </script>
+</body>
+
+</html>

@@ -217,6 +217,7 @@ export interface VNode<
 // can divide a template into nested blocks, and within each block the node
 // structure would be stable. This allows us to skip most children diffing
 // and only worry about the dynamic nodes (indicated by patch flags).
+// 维护blocktree的栈
 export const blockStack: (VNode[] | null)[] = []
 export let currentBlock: VNode[] | null = null
 

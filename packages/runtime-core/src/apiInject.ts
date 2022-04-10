@@ -45,6 +45,7 @@ export function inject(
 ) {
   // fallback to `currentRenderingInstance` so that this can be called in
   // a functional component
+  // inject: 函数组件中 也可以是使用 inject
   const instance = currentInstance || currentRenderingInstance
   if (instance) {
     // #2400
